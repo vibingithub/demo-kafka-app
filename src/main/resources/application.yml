@@ -1,0 +1,18 @@
+server:
+  port: 6000
+     
+common.topic-name: string-data
+student.topic-name: student-data
+
+# Using Upstash kafka cluster
+spring:
+  kafka:
+     bootstrap-servers: charming-termite-11172-eu2-kafka.upstash.io:9092
+     properties:
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: SCRAM-SHA-256
+        jaas:
+          config: org.apache.kafka.common.security.scram.ScramLoginModule required username="Y2hhcm1pbmctdGVybWl0ZS0xMTE3MiSSwNWrALSdMNfaKOOrJpLoE6Kf5rD88sQ" password="NDU4NWFkNDEtMjVkZC00ODUyLTg5MjktZjUwNmRhNGQ4ZmU3";
+

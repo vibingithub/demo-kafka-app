@@ -1,12 +1,9 @@
 package com.ecsfin.demo.kafka.config;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -19,20 +16,22 @@ import com.ecsfin.demo.kafka.model.Student;
 @Configuration
 public class KafkaProducerConfig {
 	
-	@Autowired
-	KafkaCommonProperties kafkaCommonProperties;
-
-	private String KAFKA_BOOTSTRAP_SERVER;
-
-	public KafkaProducerConfig(@Value("${spring.kafka.bootstrap-servers}") String bootStrapServer) {
-		KAFKA_BOOTSTRAP_SERVER = bootStrapServer;
-	}
+	private KafkaCommonProperties kafkaCommonProperties;
 	
+	public KafkaProducerConfig(KafkaCommonProperties kafkaCommonProperties) {
+		this.kafkaCommonProperties = kafkaCommonProperties;
+	}
+
 	@Bean
 	ProducerFactory<String, String> producerFactory(){
 		Map<String, Object> props = kafkaCommonProperties.getCommonProperties();
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		
+		//High Throughput Producer
+		props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+		props.put(ProducerConfig.LINGER_MS_CONFIG, "20");
+		props.put(ProducerConfig.BATCH_SIZE_CONFIG, Integer.toString(32*1024));
 
 		return new DefaultKafkaProducerFactory<>(props);
 	}
@@ -47,6 +46,11 @@ public class KafkaProducerConfig {
 		Map<String, Object> props = kafkaCommonProperties.getCommonProperties();
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+		
+		//High Throughput Producer
+		props.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+		props.put(ProducerConfig.LINGER_MS_CONFIG, "20");
+		props.put(ProducerConfig.BATCH_SIZE_CONFIG, Integer.toString(32*1024));
 		
 		return new DefaultKafkaProducerFactory<>(props);
 	}
